@@ -1,0 +1,202 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#menu {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    transition: transform 0.3s ease-in-out;
+    position: absolute;
+    z-index: 1000;
+    height: 100%;
+    transform: translateX(0); /* Standardwert für sichtbar */
+}
+
+#menu.hidden {
+    transform: translateX(-100%);
+}
+
+#menu h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+#menu ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#menu li {
+    margin: 10px 0;
+}
+
+#cesiumContainer {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#menuToggle {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 1001;
+    background-color: #383838;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 1px;
+    cursor: pointer;
+}
+
+
+
+/* Medienabfrage für kleine Bildschirme */
+@media (max-width: 768px) {
+    #menu {
+        position: fixed;
+        width: 100%;
+        height: 100vh; /* 100% der Bildschirmhöhe */
+        top: 0;
+        left: 0;
+        background-color: #f4f4f4;
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+}
+
+
+/* Legendenstil */
+#legend {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Layer-Eintrag */
+.legend-item {
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: strech;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+
+/* Titel des Layers */
+.legend-item-title {
+    background-color: #f7f7f7;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-start; /* Elemente nach links ausrichten */
+    align-items: center;
+    flex-grow: 1;
+}
+
+/* Checkbox-Stil für bessere Ausrichtung */
+.legend-item-title input[type="checkbox"] {
+    margin-right: 10px; /* Abstand zwischen Checkbox und Titel */
+}
+
+
+/* Klappbares Menü (versteckt) */
+.legend-item-menu {
+    display: none;
+    background-color: #fff;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+/* Sichtbares Menü */
+.legend-item-menu.open {
+    display: block;
+}
+
+
+
+/* Slider Stil */
+input[type="range"] {
+    width: 100%;
+    margin: 5px 0;
+}
+
+
+.legend-item-menu {
+    transition: max-height 0.3s ease;
+}
+
+/* Copyright-Button */
+.copyright-button {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    background-color: #383838;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* Overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.overlay.hidden {
+    display: none;
+}
+
+.overlay-content {
+    position: relative;
+    background: white;
+    width: 80%;
+    height: 80%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.overlay-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+

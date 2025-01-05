@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Viewer Ski Touring</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.93/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.93/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="menuToggle">☰</button>
+    <div id="menu" class="hidden">
+        <h2>Legend</h2>
+        <ul id="legend"></ul>
+    </div>
+    <div id="cesiumContainer"></div>
+    <div id="invisibleCredits" style="display: none;"></div>
+    <div id="copyrightButton" class="copyright-button">©</div>
+        <div id="overlay" class="overlay hidden">
+            <div class="overlay-content">
+                <button id="closeOverlay" class="close-button">✖</button>
+                <iframe id="overlayFrame" src="" frameborder="0" class="overlay-iframe"></iframe>
+            </div>
+        </div>
+    
+    <script type="module" src="viewer-config.js"></script>
+</body>
+
+<script>
+const menuToggle = document.getElementById('menuToggle');
+const menu = document.getElementById('menu');
+
+// Function to control menu visibility based on screen width
+// This makes it responsive. Hopefully, it works perfectly 🤞.
+function updateMenuDisplay() {
+    if (window.innerWidth > 768) {
+        menu.classList.remove('hidden'); // Show menu
+        menuToggle.style.display = 'none'; // Hide the button
+    } else {
+        menu.classList.add('hidden'); // Hide the menu
+        menuToggle.style.display = 'block'; // Show the button
+    }
+}
+
+// Toggle the menu visibility on button click
+menuToggle.addEventListener('click', () => {
+    const isHidden = menu.classList.toggle('hidden');
+    menuToggle.textContent = isHidden ? '☰' : '✖';
+
+    // Just to ensure the CSS rule does its job
+    if (!isHidden) {
+        menu.style.transform = 'translateX(0)'; // Slide in
+    } else {
+        menu.style.transform = 'translateX(-100%)'; // Slide out
+    }
+});
+
+// Update menu display on window resize event
+window.addEventListener('resize', updateMenuDisplay);
+
+// Initial call to set correct menu display
+updateMenuDisplay();
+
+</script>
+
+</html>
+
