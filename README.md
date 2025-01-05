@@ -6,3 +6,7 @@ Ein interaktiver 3D-Viewer basierend auf Cesium.js zur Darstellung und Verwaltun
 Dynamische Layer-Verwaltung.
 Interaktive Legende mit Transparenzregelung.
 Vordefinierter Zoom auf die Schweiz.
+
+
+🍾 Live-Version
+https://3d.geo-tech.ch/
