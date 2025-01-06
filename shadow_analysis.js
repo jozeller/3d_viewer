@@ -40,8 +40,9 @@ export async function addShadowAnalysis(viewer) {
         viewer.shadows = true;
         viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
         viewer.scene.globe.enableLighting = true;
-        viewer.scene.shadowMap.maximumDistance = 200000;
-        viewer.scene.shadowMap.size = 1024;
+        viewer.scene.shadowMap.maximumDistance = 50000;
+        viewer.scene.shadowMap.size = 8000;
+        viewer.scene.shadowMap.softShadows = true;
         viewer.scene.globe.depthTestAgainstTerrain = true;
     }
 
@@ -92,7 +93,7 @@ export async function addShadowAnalysis(viewer) {
         const sunriseHour = sunrise.hour + sunrise.minute / 60;
         const sunsetHour = sunset.hour + sunset.minute / 60;
 
-        const buffer = 10 / 60;
+        const buffer = 15 / 60;
 
         slider.min = (sunriseHour + buffer).toFixed(2);
         slider.max = (sunsetHour - buffer).toFixed(2);

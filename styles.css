@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    overflow: hidden;
+    /* overflow: hidden; */
     font-family: Arial, sans-serif;
 }
 
@@ -153,16 +153,27 @@ input[type="range"] {
     z-index: 1000;
 }
 
-
+/*
 #copyrightButton
 {
     bottom: 10px;
-    left: 10px; /* Beide Buttons links unten */
+    left: 10px; 
 }
 
 #shadowButton {
     bottom: 10px;
-    left: 60px; /* Beide Buttons links unten */
+    left: 60px; 
+}
+*/
+@media (max-width: 768px) {
+    #copyrightButton {
+        bottom: calc(env(safe-area-inset-bottom) + 60px);
+        left: 10px;
+    }
+    #shadowButton {
+        bottom: calc(env(safe-area-inset-bottom) + 110px);
+        left: 10px;
+    }
 }
 
 

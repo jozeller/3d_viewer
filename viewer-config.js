@@ -13,6 +13,7 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
     }),
     shadows: true,
     baseLayerPicker: false,
+    infoBox: false,
     animation: false, // No animation, keeps it minimal
     timeline: false,  // Who needs this ugly timeline anyway?
     selectionIndicator: false, // No selection indicator
