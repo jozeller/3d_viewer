@@ -59,7 +59,7 @@ body {
 
 
 
-/* Medienabfrage für kleine Bildschirme */
+/* Abfrage für kleine Bildschirme */
 @media (max-width: 768px) {
     #menu {
         position: fixed;
@@ -136,9 +136,9 @@ input[type="range"] {
     transition: max-height 0.3s ease;
 }
 
-/* Copyright-Button */
-.copyright-button {
-    position: fixed;
+/* Action-Button */
+.action-button {
+    position: absolute;
     bottom: 10px;
     left: 10px;
     width: 40px;
@@ -151,6 +151,45 @@ input[type="range"] {
     align-items: center;
     cursor: pointer;
     z-index: 1000;
+}
+
+
+#copyrightButton
+{
+    bottom: 10px;
+    left: 10px; /* Beide Buttons links unten */
+}
+
+#shadowButton {
+    bottom: 10px;
+    left: 60px; /* Beide Buttons links unten */
+}
+
+
+@media (min-width: 768px) {
+    #copyrightButton {
+        bottom: 10px;
+        left: calc(250px + 30px); /* 250px entspricht der Breite der Legende */
+    }
+
+    #shadowButton {
+        bottom: 10px;
+        left: calc(250px + 80px); /* 250px Breite der Legende + zusätzlicher Abstand */
+    }
+}
+
+/* Schatten-Menü */
+#shadowSliderContainer {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
 }
 
 /* Overlay */
@@ -200,3 +239,24 @@ input[type="range"] {
     border: none;
 }
 
+
+
+.modern-date-selector {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: #333;
+    width: calc(100% - 20px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: border 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.modern-date-selector:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
+    outline: none;
+}

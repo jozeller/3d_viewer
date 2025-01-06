@@ -1,6 +1,7 @@
 import { layersConfig } from './layersConfig.js';
 import { performInitialZoom, sortLayersByOrder} from './cesium_utils.js';
 import { addLayersToLegend } from './addlayertolegend.js';
+import { addShadowAnalysis } from './shadow_analysis.js';
 
 
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1MzhmMWRkMS01ZGM2LTRlMTctYjU1YS03NWE3YzUyOWIzMzkiLCJpZCI6NzY1NzgsImlhdCI6MTczMTA4MTIwMn0.u1K3tG279-utQU2WAw2nKtPGx7hiwnJHLHis9JPcM8Q';
@@ -10,9 +11,11 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: new Cesium.CesiumTerrainProvider({
         url: "//3d.geo.admin.ch/ch.swisstopo.terrain.3d/v1" // Swiss 3D terrain
     }),
+    shadows: true,
     baseLayerPicker: false,
     animation: false, // No animation, keeps it minimal
-    timeline: false,  // Who needs a timeline anyway?
+    timeline: false,  // Who needs this ugly timeline anyway?
+    selectionIndicator: false, // No selection indicator
     creditContainer: document.getElementById('invisibleCredits') // Hides credits
 });
 
@@ -55,6 +58,9 @@ sortLayersByOrder(layersConfig, viewer);
 // Add legend layers to the UI
 addLayersToLegend(layersConfig, viewer);
 
+// Add Shadow Analysis to the UI
+addShadowAnalysis(viewer);
+
 
 const copyrightButton = document.getElementById('copyrightButton');
 const overlay = document.getElementById('overlay');
@@ -62,7 +68,7 @@ const closeOverlay = document.getElementById('closeOverlay');
 const overlayFrame = document.getElementById('overlayFrame');
 
 // URL des Overlays einstellen
-const overlayURL = 'copyright.html'; // Deine HTML-Datei
+const overlayURL = 'copyright.html';
 
 // Overlay öffnen
 copyrightButton.addEventListener('click', () => {
@@ -73,5 +79,5 @@ copyrightButton.addEventListener('click', () => {
 // Overlay schließen
 closeOverlay.addEventListener('click', () => {
     overlay.classList.add('hidden');
-    overlayFrame.src = ''; // Frame leeren
+    overlayFrame.src = ''; // Frame clear
 });
