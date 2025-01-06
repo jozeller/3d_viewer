@@ -1,3 +1,33 @@
+async function updateTerrainProvider(viewer, newTerrainProvider) {
+    // Save the current state of imagery layers
+    const imageryLayersState = [];
+    const imageryLayers = viewer.imageryLayers;
+
+    for (let i = 0; i < imageryLayers.length; i++) {
+        const layer = imageryLayers.get(i);
+        imageryLayersState.push({
+            imageryProvider: layer.imageryProvider,
+            show: layer.show,
+            alpha: layer.alpha,
+        });
+    }
+
+    // Replace the terrain provider
+    viewer.terrainProvider = newTerrainProvider;
+
+    // Restore the imagery layers
+    imageryLayers.removeAll(false);
+    imageryLayersState.forEach(state => {
+        const newLayer = imageryLayers.addImageryProvider(state.imageryProvider);
+        newLayer.show = state.show;
+        newLayer.alpha = state.alpha;
+    });
+
+    console.log("Terrain provider updated without reloading layers.");
+}
+
+
+
 export async function addShadowAnalysis(viewer) {
     const shadowButton = document.getElementById('shadowButton');
     const sliderContainer = document.createElement('div');
@@ -66,11 +96,17 @@ export async function addShadowAnalysis(viewer) {
         }
     }
     async function enableShadows() {
+        /*
         // Switch to Cesium World Terrain for better shadow calculations
         viewer.terrainProvider = Cesium.createWorldTerrain({
             requestVertexNormals: true, // Needed for accurate shadow calculations
         });
-
+        */
+        const newTerrain = Cesium.createWorldTerrain({
+            requestVertexNormals: true,
+        });
+    
+        await updateTerrainProvider(viewer, newTerrain);
         // Enable shadows and terrain lighting
         viewer.shadows = true;
         viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
