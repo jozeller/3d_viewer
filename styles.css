@@ -153,18 +153,7 @@ input[type="range"] {
     z-index: 1000;
 }
 
-/*
-#copyrightButton
-{
-    bottom: 10px;
-    left: 10px; 
-}
 
-#shadowButton {
-    bottom: 10px;
-    left: 60px; 
-}
-*/
 @media (max-width: 768px) {
     #copyrightButton {
         bottom: calc(env(safe-area-inset-bottom) + 60px);

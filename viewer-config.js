@@ -22,6 +22,7 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
 
 let initialZoomPerformed = false;
 
+viewer.scene.globe.preloadSiblings = true;
 // Wait until all tiles are loaded before performing the initial zoom
 viewer.scene.globe.tileLoadProgressEvent.addEventListener((current, total) => {
     if (!initialZoomPerformed && current === 0) {

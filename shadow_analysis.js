@@ -36,41 +36,89 @@ export async function addShadowAnalysis(viewer) {
     sliderContainer.appendChild(timeInfo);
     document.body.appendChild(sliderContainer);
 
-    function enableShadows() {
+    let shadowsActive = false;
+    const minimumHeightAboveTerrain = 1500; // Minimum height above terrain in meters
+
+    let moveEndListenerFunction;
+
+    function cameraMoveEndHandler(viewer) {
+        const cameraPosition = viewer.scene.camera.positionCartographic;
+        const terrainHeight = viewer.scene.globe.getHeight(cameraPosition) || 0;
+        const currentHeightAboveTerrain = cameraPosition.height - terrainHeight;
+
+        if (currentHeightAboveTerrain < minimumHeightAboveTerrain) {
+            const newHeight = terrainHeight + minimumHeightAboveTerrain;
+
+            viewer.scene.camera.flyTo({
+                destination: Cesium.Cartesian3.fromRadians(
+                    cameraPosition.longitude,
+                    cameraPosition.latitude,
+                    newHeight
+                ),
+                orientation: {
+                    pitch: Cesium.Math.toRadians(-40)
+                },
+                duration: 0.5,
+                easingFunction: Cesium.EasingFunction.EXPONENTIAL_IN_OUT,
+            });
+
+            console.log(`Camera adjusted to maintain a minimum height of ${minimumHeightAboveTerrain} meters.`);
+        }
+    }
+    async function enableShadows() {
+        // Switch to Cesium World Terrain for better shadow calculations
+        viewer.terrainProvider = Cesium.createWorldTerrain({
+            requestVertexNormals: true, // Needed for accurate shadow calculations
+        });
+
+        // Enable shadows and terrain lighting
         viewer.shadows = true;
         viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
         viewer.scene.globe.enableLighting = true;
-        viewer.scene.shadowMap.maximumDistance = 50000;
-        viewer.scene.shadowMap.size = 8000;
-        viewer.scene.shadowMap.softShadows = true;
-        viewer.scene.globe.depthTestAgainstTerrain = true;
+        viewer.scene.shadowMap.maximumDistance = 20000000; // Increase shadow map range
+        viewer.scene.shadowMap.size = 2048; // Increase shadow resolution
+        viewer.scene.shadowMap.softShadows = false; // Enable soft shadows
+        viewer.scene.shadowMap.darkness = 0.6; // Reduce shadow darkness
+        viewer.scene.globe.preloadSiblings = true; // Load neighboring tiles
+        //viewer.scene.globe.preloadAncestors = true; // Load parent tiles for better accuracy
+
+        console.log("Shadows enabled and terrain switched to Cesium World Terrain.");
+
+        moveEndListenerFunction = cameraMoveEndHandler.bind(null, viewer);
+        viewer.camera.moveEnd.addEventListener(moveEndListenerFunction);
+
     }
 
-    function disableShadows() {
+    async function disableShadows() {
+        // Disable shadows and terrain lighting
         viewer.shadows = false;
         viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
         viewer.scene.globe.enableLighting = false;
+
+        if (moveEndListenerFunction) {
+            viewer.camera.moveEnd.removeEventListener(moveEndListenerFunction);
+            moveEndListenerFunction = null;
+        }
+        console.log("Shadows disabled and camera restriction removed.");
     }
 
-    let shadowsActive = false;
-
-    shadowButton.addEventListener('click', () => {
+    shadowButton.addEventListener('click', async () => {
         const isVisible = sliderContainer.style.display === 'block';
-
-        if (isVisible) {
-            sliderContainer.style.display = 'none';
-            disableShadows();
-            shadowsActive = false;
-            shadowButton.style.backgroundColor = '#383838';
-        } else {
-            sliderContainer.style.display = 'block';
-            enableShadows();
-            shadowsActive = true;
-            shadowButton.style.backgroundColor = '#ffd904';
-            updateSunTimes();
-        }
+    
+            if (isVisible) {
+                sliderContainer.style.display = 'none';
+                await disableShadows(); // Disable shadow analysis
+                shadowsActive = false;
+                shadowButton.style.backgroundColor = '#383838';
+            } else {
+                sliderContainer.style.display = 'block';
+                await enableShadows(); // Enable shadow analysis
+                shadowsActive = true;
+                shadowButton.style.backgroundColor = '#ffd904';
+                updateSunTimes();
+            }
     });
-
+    
     async function fetchSunTimes(latitude, longitude, date) {
         const response = await fetch(
             `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&formatted=0`
@@ -93,7 +141,7 @@ export async function addShadowAnalysis(viewer) {
         const sunriseHour = sunrise.hour + sunrise.minute / 60;
         const sunsetHour = sunset.hour + sunset.minute / 60;
 
-        const buffer = 15 / 60;
+        const buffer = 15 / 60; // Buffer of 15 minutes
 
         slider.min = (sunriseHour + buffer).toFixed(2);
         slider.max = (sunsetHour - buffer).toFixed(2);
