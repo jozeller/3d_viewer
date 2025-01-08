@@ -112,7 +112,7 @@ export async function addShadowAnalysis(viewer) {
 
     async function enableShadows() {
         const newTerrain = Cesium.createWorldTerrain({
-            requestVertexNormals: true,
+            //requestVertexNormals: true,
         });
     
         await updateTerrainProvider(viewer, newTerrain);
@@ -131,7 +131,13 @@ export async function addShadowAnalysis(viewer) {
                 cameraPosition.latitude,
                 newHeight
             );
-            camera.flyTo({ destination });
+            camera.flyTo({ destination ,        
+                orientation: {
+                    heading: Cesium.Math.toRadians(0), // Facing north
+                    pitch: Cesium.Math.toRadians(-30), // Looking down
+                    roll: 0 // No rolling!
+            }
+            });
             console.log(`Kamera auf Mindesthöhe angepasst: ${minimumHeightAboveTerrain}m.`);
         } else if (currentHeightAboveTerrain > maximumHeightAboveTerrain) {
             const newHeight = terrainHeight + maximumHeightAboveTerrain;
@@ -162,7 +168,7 @@ export async function addShadowAnalysis(viewer) {
         viewer.scene.shadowMap.maximumDistance = 20000000;
         viewer.scene.shadowMap.size = 4096;
         viewer.scene.shadowMap.softShadows = true;
-        viewer.scene.shadowMap.darkness = 0.6;
+        viewer.scene.shadowMap.darkness = 0.5;
  //       viewer.scene.shadowMap.minimumPcfSamples = 16;   // Increase shadow quality
     
         // Enforce camera height restrictions during shadow analysis
