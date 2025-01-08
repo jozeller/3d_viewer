@@ -26,8 +26,6 @@ async function updateTerrainProvider(viewer, newTerrainProvider) {
     console.log("Terrain provider updated without reloading layers.");
 }
 
-
-
 export async function addShadowAnalysis(viewer) {
     const shadowButton = document.getElementById('shadowButton');
     const sliderContainer = document.createElement('div');
@@ -67,63 +65,112 @@ export async function addShadowAnalysis(viewer) {
     document.body.appendChild(sliderContainer);
 
     let shadowsActive = false;
-    const minimumHeightAboveTerrain = 1500; // Minimum height above terrain in meters
+    let heightRestrictionListener = null;
 
-    let moveEndListenerFunction;
 
-    function cameraMoveEndHandler(viewer) {
-        const cameraPosition = viewer.scene.camera.positionCartographic;
-        const terrainHeight = viewer.scene.globe.getHeight(cameraPosition) || 0;
-        const currentHeightAboveTerrain = cameraPosition.height - terrainHeight;
-
-        if (currentHeightAboveTerrain < minimumHeightAboveTerrain) {
-            const newHeight = terrainHeight + minimumHeightAboveTerrain;
-
-            viewer.scene.camera.flyTo({
-                destination: Cesium.Cartesian3.fromRadians(
+    const minimumHeightAboveTerrain = 8000; // Mindesthöhe über dem Gelände in Metern
+    const maximumHeightAboveTerrain = 20000; // Maximale Höhe über dem Gelände in Metern
+    
+    function enforceCameraHeightRestriction(viewer) {
+        const camera = viewer.scene.camera;
+        const globe = viewer.scene.globe;
+    
+        heightRestrictionListener = () => {
+            const cameraPosition = camera.positionCartographic;
+            const terrainHeight = globe.getHeight(cameraPosition) || 0;
+            const currentHeightAboveTerrain = cameraPosition.height - terrainHeight;
+    
+            if (currentHeightAboveTerrain < minimumHeightAboveTerrain) {
+                // Set camera to minimum height
+                const newHeight = terrainHeight + minimumHeightAboveTerrain;
+                const destination = Cesium.Cartesian3.fromRadians(
                     cameraPosition.longitude,
                     cameraPosition.latitude,
                     newHeight
-                ),
-                orientation: {
-                    pitch: Cesium.Math.toRadians(-40)
-                },
-                duration: 0.5,
-                easingFunction: Cesium.EasingFunction.EXPONENTIAL_IN_OUT,
-            });
-
-            console.log(`Camera adjusted to maintain a minimum height of ${minimumHeightAboveTerrain} meters.`);
-        }
+                );
+                camera.position = destination;
+    
+                console.log(`Höhe angepasst: Mindesthöhe ${minimumHeightAboveTerrain}m erreicht.`);
+            }
+    
+            if (currentHeightAboveTerrain > maximumHeightAboveTerrain) {
+                // Set camera to maximum height
+                const newHeight = terrainHeight + maximumHeightAboveTerrain;
+                const destination = Cesium.Cartesian3.fromRadians(
+                    cameraPosition.longitude,
+                    cameraPosition.latitude,
+                    newHeight
+                );
+                camera.position = destination;
+    
+                console.log(`Höhe angepasst: Maximalhöhe ${maximumHeightAboveTerrain}m erreicht.`);
+            }
+        };
+        viewer.scene.preRender.addEventListener(heightRestrictionListener);
     }
+    
+
     async function enableShadows() {
-        /*
-        // Switch to Cesium World Terrain for better shadow calculations
-        viewer.terrainProvider = Cesium.createWorldTerrain({
-            requestVertexNormals: true, // Needed for accurate shadow calculations
-        });
-        */
         const newTerrain = Cesium.createWorldTerrain({
             requestVertexNormals: true,
         });
     
         await updateTerrainProvider(viewer, newTerrain);
+    
+        // Check and adjust camera height before enforcing restrictions
+        const camera = viewer.scene.camera;
+        const globe = viewer.scene.globe;
+        const cameraPosition = camera.positionCartographic;
+        const terrainHeight = globe.getHeight(cameraPosition) || 0;
+        const currentHeightAboveTerrain = cameraPosition.height - terrainHeight;
+    
+        if (currentHeightAboveTerrain < minimumHeightAboveTerrain) {
+            const newHeight = terrainHeight + minimumHeightAboveTerrain;
+            const destination = Cesium.Cartesian3.fromRadians(
+                cameraPosition.longitude,
+                cameraPosition.latitude,
+                newHeight
+            );
+            camera.flyTo({ destination });
+            console.log(`Kamera auf Mindesthöhe angepasst: ${minimumHeightAboveTerrain}m.`);
+        } else if (currentHeightAboveTerrain > maximumHeightAboveTerrain) {
+            const newHeight = terrainHeight + maximumHeightAboveTerrain;
+            const destination = Cesium.Cartesian3.fromRadians(
+                cameraPosition.longitude,
+                cameraPosition.latitude,
+                newHeight
+            );
+            camera.flyTo({ destination ,        
+                orientation: {
+                    heading: Cesium.Math.toRadians(0), // Facing north
+                    pitch: Cesium.Math.toRadians(-50), // Looking down
+                    roll: 0 // No rolling!
+            }
+            });
+            console.log(`Kamera auf Maximalhöhe angepasst: ${maximumHeightAboveTerrain}m.`);
+        }
+    
         // Enable shadows and terrain lighting
+        viewer.scene.globe.preloadSiblings = true;
+        viewer.scene.globe.preloadAncestors = true;
+        //viewer.scene.globe.maximumScreenSpaceError = 1; // Increase terrain quality
+        //viewer.scene.globe.tileCacheSize = 1000; // Increase terrain cache size
+        viewer.scene.requestRenderMode = false;
         viewer.shadows = true;
         viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
         viewer.scene.globe.enableLighting = true;
-        viewer.scene.shadowMap.maximumDistance = 20000000; // Increase shadow map range
-        viewer.scene.shadowMap.size = 2048; // Increase shadow resolution
-        viewer.scene.shadowMap.softShadows = false; // Enable soft shadows
-        viewer.scene.shadowMap.darkness = 0.6; // Reduce shadow darkness
-        viewer.scene.globe.preloadSiblings = true; // Load neighboring tiles
-        //viewer.scene.globe.preloadAncestors = true; // Load parent tiles for better accuracy
-
+        viewer.scene.shadowMap.maximumDistance = 20000000;
+        viewer.scene.shadowMap.size = 4096;
+        viewer.scene.shadowMap.softShadows = true;
+        viewer.scene.shadowMap.darkness = 0.3;
+ //       viewer.scene.shadowMap.minimumPcfSamples = 16;   // Increase shadow quality
+    
+        // Enforce camera height restrictions during shadow analysis
+        enforceCameraHeightRestriction(viewer);
+    
         console.log("Shadows enabled and terrain switched to Cesium World Terrain.");
-
-        moveEndListenerFunction = cameraMoveEndHandler.bind(null, viewer);
-        viewer.camera.moveEnd.addEventListener(moveEndListenerFunction);
-
     }
+    
 
     async function disableShadows() {
         // Disable shadows and terrain lighting
@@ -131,10 +178,12 @@ export async function addShadowAnalysis(viewer) {
         viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
         viewer.scene.globe.enableLighting = false;
 
-        if (moveEndListenerFunction) {
-            viewer.camera.moveEnd.removeEventListener(moveEndListenerFunction);
-            moveEndListenerFunction = null;
-        }
+    // Remove camera height restriction
+    if (heightRestrictionListener) {
+        viewer.scene.preRender.removeEventListener(heightRestrictionListener);
+        heightRestrictionListener = null;
+    }
+
         console.log("Shadows disabled and camera restriction removed.");
     }
 
@@ -158,7 +207,7 @@ export async function addShadowAnalysis(viewer) {
     async function fetchSunTimes(latitude, longitude, date) {
         const response = await fetch(
             `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&date=${date}&formatted=0`
-        );
+        ); // Fetches sunrise and sunset times
         const data = await response.json();
         return {
             sunrise: luxon.DateTime.fromISO(data.results.sunrise, { zone: 'UTC' }).setZone('Europe/Zurich'),
@@ -187,7 +236,7 @@ export async function addShadowAnalysis(viewer) {
 
         timeInfo.innerHTML = `
             <div>☀️ Sonnenaufgang: ${sunrise.toFormat('HH:mm')} 🌙 Sonnenuntergang: ${sunset.toFormat('HH:mm')}</div>
-        `;
+        `; // Displays sunrise and sunset times
     }
 
     function updateTimeLabel(value) {
@@ -212,6 +261,6 @@ export async function addShadowAnalysis(viewer) {
         updateSunTimes();
     });
 
-    viewer.clock.shouldAnimate = false;
-    viewer.clock.currentTime = Cesium.JulianDate.fromDate(new Date());
+    viewer.clock.shouldAnimate = false; // Stop the clock from animating
+    viewer.clock.currentTime = Cesium.JulianDate.fromDate(new Date()); // Set the clock to the current time
 }

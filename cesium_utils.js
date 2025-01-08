@@ -1,7 +1,7 @@
 export function performInitialZoom(viewer) {
-    // Camera flies to Switzerland with a nice tilt angle
+    // Camera zoom with a nice tilt angle
     viewer.camera.flyTo({
-        destination: Cesium.Cartesian3.fromDegrees(8.627678, 46.350356, 60000), 
+        destination: Cesium.Cartesian3.fromDegrees(8.627678, 46.350356, 60000),     
         orientation: {
             heading: Cesium.Math.toRadians(0), // Facing north
             pitch: Cesium.Math.toRadians(-50), // Looking down
