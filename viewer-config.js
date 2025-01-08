@@ -4,8 +4,8 @@ import { addLayersToLegend } from './addlayertolegend.js';
 import { addShadowAnalysis } from './shadow_analysis.js';
 
 
-Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI1MzhmMWRkMS01ZGM2LTRlMTctYjU1YS03NWE3YzUyOWIzMzkiLCJpZCI6NzY1NzgsImlhdCI6MTczMTA4MTIwMn0.u1K3tG279-utQU2WAw2nKtPGx7hiwnJHLHis9JPcM8Q';
-
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmODI4YTJjMy0zYWZhLTRlNzItOWQ3My05NTNkZDQ1ODYyYWYiLCJpZCI6NzY1NzgsImlhdCI6MTYzOTU1MzA1Nn0.AQlWSR6-eL0Wdq2c0UyV3_gyn6cd1xmm3KolhvK54cw';
+                                 
 // Initialize Cesium Viewer with Swisstopo terrain
 const viewer = new Cesium.Viewer('cesiumContainer', {
     terrainProvider: new Cesium.CesiumTerrainProvider({
@@ -20,6 +20,14 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
     creditContainer: document.getElementById('invisibleCredits') // Hides credits
 });
 
+viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(8.1355, 46.4754, 400000), // Zentrum der Schweiz
+    orientation: {
+        heading: Cesium.Math.toRadians(0),   // Richtung Norden
+        pitch: Cesium.Math.toRadians(-90),  // Blickwinkel nach unten
+        roll: 0                             // Kein Rollen
+    }
+});
 let initialZoomPerformed = false;
 
 viewer.scene.globe.preloadSiblings = true;
