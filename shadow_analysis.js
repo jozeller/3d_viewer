@@ -162,7 +162,7 @@ export async function addShadowAnalysis(viewer) {
         viewer.scene.shadowMap.maximumDistance = 20000000;
         viewer.scene.shadowMap.size = 4096;
         viewer.scene.shadowMap.softShadows = true;
-        viewer.scene.shadowMap.darkness = 0.3;
+        viewer.scene.shadowMap.darkness = 0.6;
  //       viewer.scene.shadowMap.minimumPcfSamples = 16;   // Increase shadow quality
     
         // Enforce camera height restrictions during shadow analysis
