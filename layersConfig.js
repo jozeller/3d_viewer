@@ -24,7 +24,7 @@ export const layersConfig = [
                 transparent: true
             }
         }),
-        active: true,
+        active: false,
         opacity: 1,
         viewerLayer: null
     },

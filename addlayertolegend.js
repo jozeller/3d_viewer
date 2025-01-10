@@ -1,7 +1,14 @@
-import {sortLayersByOrder} from './cesium_utils.js';
+import { updateLayerVisibility } from './cesium_utils.js';
+import { initializeLayers } from './cesium_utils.js';
 
+import { setupLayerVisibilityControl } from './cesium_utils.js';
+import { layersConfig } from './layersConfig.js';
 
+const sanitizeLayerName = (name) => name.replace(/[^a-zA-Z0-9-_]/g, '-');
+
+// Funktion zum Hinzufügen der Layer zur Legende
 export function addLayersToLegend(layersConfig, viewer) {
+
     const groupedLayers = layersConfig.reduce((groups, layer) => {
         if (!groups[layer.category]) {
             groups[layer.category] = [];
@@ -31,19 +38,18 @@ export function addLayersToLegend(layersConfig, viewer) {
                 title.className = 'legend-item-title';
                 title.textContent = layer.name;
 
+                // Checkbox mit eindeutiger ID
                 const toggleCheckbox = document.createElement('input');
                 toggleCheckbox.type = 'checkbox';
                 toggleCheckbox.checked = layer.active;
+                toggleCheckbox.id = `checkbox-${sanitizeLayerName(layer.name)}`;
 
+                // Eventlistener für die Checkbox
                 toggleCheckbox.addEventListener('change', () => {
-                    if (toggleCheckbox.checked) {
-                        layer.viewerLayer = viewer.imageryLayers.addImageryProvider(layer.provider);
-                        layer.viewerLayer.alpha = layer.opacity || 1;
-                    } else {
-                        viewer.imageryLayers.remove(layer.viewerLayer);
-                        layer.viewerLayer = null;
-                    }
-                    sortLayersByOrder(layersConfig, viewer);
+                    layer.active = toggleCheckbox.checked;
+
+                    // Sichtbarkeit ohne Neuladen ändern
+                    updateLayerVisibility(layersConfig, viewer);
                 });
 
                 const menu = document.createElement('div');
@@ -86,7 +92,7 @@ export function addLayersToLegend(layersConfig, viewer) {
                 listItem.appendChild(menu);
                 categoryContainer.appendChild(listItem);
 
-                // Initialize active layers
+                // Initialisiere aktive Layer
                 if (layer.active && toggleCheckbox.checked) {
                     toggleCheckbox.dispatchEvent(new Event('change'));
                 }
@@ -95,3 +101,4 @@ export function addLayersToLegend(layersConfig, viewer) {
         legendElement.appendChild(categoryContainer);
     });
 }
+
