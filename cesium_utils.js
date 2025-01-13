@@ -1,3 +1,4 @@
+
 export function performInitialZoom(viewer) {
     // Camera zoom with a nice tilt angle
     viewer.camera.flyTo({
@@ -65,3 +66,21 @@ export function setupLayerVisibilityControl(layersConfig, viewer) {
     });
 }
 
+
+export function sortLayersByOrder(layersConfig, viewer) {
+    const imageryLayers = viewer.imageryLayers;
+    const defaultLayer = layersConfig.find(layer => layer.order === 9999);
+    const activeLayers = layersConfig
+        .filter(layer => layer.viewerLayer && layer.order !== 9999)
+        .sort((a, b) => a.order - b.order);
+
+    // Entferne alle Layer und füge sie in der sortierten Reihenfolge wieder hinzu
+    imageryLayers.removeAll(false);
+    [...activeLayers, defaultLayer].reverse().forEach(layer => {
+        if (layer && layer.viewerLayer) {
+            imageryLayers.add(layer.viewerLayer);
+        }
+    });
+
+   // console.log("Layers sorted correctly:", [defaultLayer.name, ...activeLayers.map(layer => layer.name)]);
+}

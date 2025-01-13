@@ -120,10 +120,21 @@ body {
     }
 }
 
-/* Checkbox-Stil für bessere Ausrichtung */
-.legend-item-title input[type="checkbox"] {
-    margin-right: 10px; /* Abstand zwischen Checkbox und Titel */
+/* Gemeinsamer Stil für Checkboxen und Radiobuttons */
+.legend-item-title input[type="checkbox"],
+.legend-item-title input[type="radio"] {
+    margin-right: 10px; /* Abstand zwischen Input-Element und Titel */
+    cursor: pointer; /* Zeiger-Änderung bei Hover */
+    transform: scale(1.2); /* Leichte Vergrößerung */
+    accent-color: #0078d4; /* Einheitliche Farbe für Checkboxen und Radiobuttons */
 }
+
+/* Optional: Hover-Effekt für Inputs */
+.legend-item-title input[type="checkbox"]:hover,
+.legend-item-title input[type="radio"]:hover {
+    box-shadow: 0 0 4px rgba(0, 120, 212, 0.6); /* Glüheffekt bei Hover */
+}
+
 
 
 /* Klappbares Menü (versteckt) */

@@ -1,14 +1,13 @@
-//import { updateLayerVisibility } from './cesium_utils.js';
-// import { initializeLayers } from './cesium_utils.js';
-
-// import { setupLayerVisibilityControl } from './cesium_utils.js';
-// import { layersConfig } from './layersConfig.js';
+import { sortLayersByOrder } from './cesium_utils.js';
 
 const sanitizeLayerName = (name) => name.replace(/[^a-zA-Z0-9-_]/g, '-');
 
-// Funktion zum Hinzufügen der Layer zur Legende
-export function addLayersToLegend(layersConfig, viewer) {
+// Konfiguration: Gruppen mit Checkboxen oder Radiobuttons
+const radioGroups = ['Basiskarten']; // Kategorien, die Radiobuttons verwenden
+//const checkboxGroups = ['Analyse', 'Gefahrenkarten']; // Kategorien mit Checkboxen
+const categoryOrder = ['Analyse', 'Gefahrenkarten','Basiskarten']; // Sortierreihenfolge der Kategorien
 
+export function addLayersToLegend(layersConfig, viewer) {
     const groupedLayers = layersConfig.reduce((groups, layer) => {
         if (!groups[layer.category]) {
             groups[layer.category] = [];
@@ -18,7 +17,9 @@ export function addLayersToLegend(layersConfig, viewer) {
     }, {});
 
     const legendElement = document.getElementById('legend');
-    const sortedCategories = Object.keys(groupedLayers).sort();
+    
+    // Kategorien sortieren nach categoryOrder
+    const sortedCategories = categoryOrder.filter(category => groupedLayers[category]);
 
     sortedCategories.forEach((category) => {
         const categoryContainer = document.createElement('div');
@@ -27,6 +28,8 @@ export function addLayersToLegend(layersConfig, viewer) {
         const categoryTitle = document.createElement('h3');
         categoryTitle.textContent = category;
         categoryContainer.appendChild(categoryTitle);
+
+        const isRadioGroup = radioGroups.includes(category);
 
         groupedLayers[category]
             .sort((a, b) => a.order - b.order)
@@ -38,16 +41,34 @@ export function addLayersToLegend(layersConfig, viewer) {
                 title.className = 'legend-item-title';
                 title.textContent = layer.name;
 
-                // Checkbox mit eindeutiger ID
-                const toggleCheckbox = document.createElement('input');
-                toggleCheckbox.type = 'checkbox';
-                toggleCheckbox.checked = layer.active;
-                toggleCheckbox.id = `checkbox-${sanitizeLayerName(layer.name)}`;
+                const toggleInput = document.createElement('input');
+                toggleInput.type = isRadioGroup ? 'radio' : 'checkbox';
+                toggleInput.name = isRadioGroup ? `radio-${sanitizeLayerName(category)}` : '';
+                toggleInput.checked = layer.active;
+                toggleInput.id = `input-${sanitizeLayerName(layer.name)}`;
 
-                // Eventlistener für die Checkbox
-                toggleCheckbox.addEventListener('change', () => {
-                    layer.active = toggleCheckbox.checked;
+                toggleInput.addEventListener('change', () => {
+                    if (isRadioGroup) {
+                        groupedLayers[category].forEach((groupLayer) => {
+                            if (groupLayer.viewerLayer) {
+                                viewer.imageryLayers.remove(groupLayer.viewerLayer);
+                                groupLayer.viewerLayer = null;
+                            }
+                        });
+                    }
 
+                    if (toggleInput.checked) {
+                        if (!layer.viewerLayer) {
+                            layer.viewerLayer = viewer.imageryLayers.addImageryProvider(layer.provider);
+                            layer.viewerLayer.alpha = layer.opacity || 1;
+                        }
+                    } else {
+                        if (layer.viewerLayer) {
+                            viewer.imageryLayers.remove(layer.viewerLayer);
+                            layer.viewerLayer = null;
+                        }
+                    }
+                    sortLayersByOrder(layersConfig, viewer);
                 });
 
                 const menu = document.createElement('div');
@@ -85,18 +106,12 @@ export function addLayersToLegend(layersConfig, viewer) {
                     menu.classList.toggle('open');
                 });
 
-                title.prepend(toggleCheckbox);
+                title.prepend(toggleInput);
                 listItem.appendChild(title);
                 listItem.appendChild(menu);
                 categoryContainer.appendChild(listItem);
-
-                // Initialisiere aktive Layer
-                if (layer.active && toggleCheckbox.checked) {
-                    toggleCheckbox.dispatchEvent(new Event('change'));
-                }
             });
 
         legendElement.appendChild(categoryContainer);
     });
 }
-

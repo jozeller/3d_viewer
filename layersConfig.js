@@ -1,10 +1,10 @@
 // Default layer configuration
 export const defaultLayer = {
     name: "Standard Cesium Imagery",
-    category: "Base Maps",
+    category: "Basiskarten",
     order: 9999, // Highest order, so it stays behind
     provider: null,
-    active: true,
+    active: false,
     opacity: 1,
     viewerLayer: null
 };
@@ -13,7 +13,7 @@ export const defaultLayer = {
 export const layersConfig = [
     defaultLayer, // Default imagery as base
     {
-        name: "Swisstopo Aerial Imagery",
+        name: "swisstopo Luftbild",
         category: "Basiskarten",
         order: 99,
         provider: new Cesium.WebMapServiceImageryProvider({
@@ -29,7 +29,7 @@ export const layersConfig = [
         viewerLayer: null
     },
     {
-        name: "swisstopo map winter",
+        name: "swisstopo Landeskarte Winter",
         category: "Basiskarten",
         order: 98,
         provider: new Cesium.WebMapServiceImageryProvider({
@@ -45,7 +45,7 @@ export const layersConfig = [
         viewerLayer: null
     },
     {
-        name: "Slope over 30°",
+        name: "Hangneigung über 30°",
         category: "Analyse",
         order: 3,
         provider: new Cesium.WebMapServiceImageryProvider({
@@ -60,9 +60,9 @@ export const layersConfig = [
         viewerLayer: null
     },
     {
-        name: "swisstopo Ski Routes",
+        name: "swisstopo Skitouren",
         category: "Analyse",
-        order: 4,
+        order: 2,
         provider: new Cesium.WebMapServiceImageryProvider({
             url: 'https://wms.geo.admin.ch/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities',
             layers: 'ch.swisstopo-karto.skitouren',
