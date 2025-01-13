@@ -1,7 +1,9 @@
 import { layersConfig } from './layersConfig.js';
-import { performInitialZoom, sortLayersByOrder} from './cesium_utils.js';
+import { performInitialZoom, initializeLayers} from './cesium_utils.js';
 import { addLayersToLegend } from './addlayertolegend.js';
 import { addShadowAnalysis } from './shadow_analysis.js';
+import { setupLayerVisibilityControl } from './cesium_utils.js';
+
 
 
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmODI4YTJjMy0zYWZhLTRlNzItOWQ3My05NTNkZDQ1ODYyYWYiLCJpZCI6NzY1NzgsImlhdCI6MTYzOTU1MzA1Nn0.AQlWSR6-eL0Wdq2c0UyV3_gyn6cd1xmm3KolhvK54cw';
@@ -63,11 +65,13 @@ layersConfig.forEach(layer => {
 });
 
 // Sort layers after adding them
-sortLayersByOrder(layersConfig, viewer);
-
+//sortLayersByOrder(layersConfig, viewer);
+//updateLayerVisibility(layersConfig, viewer);
+initializeLayers(layersConfig, viewer);
 // Add legend layers to the UI
 addLayersToLegend(layersConfig, viewer);
 
+setupLayerVisibilityControl(layersConfig, viewer);
 // Add Shadow Analysis to the UI
 addShadowAnalysis(viewer);
 

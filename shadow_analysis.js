@@ -1,27 +1,7 @@
 async function updateTerrainProvider(viewer, newTerrainProvider) {
-    // Save the current state of imagery layers
-    const imageryLayersState = [];
-    const imageryLayers = viewer.imageryLayers;
-
-    for (let i = 0; i < imageryLayers.length; i++) {
-        const layer = imageryLayers.get(i);
-        imageryLayersState.push({
-            imageryProvider: layer.imageryProvider,
-            show: layer.show,
-            alpha: layer.alpha,
-        });
-    }
 
     // Replace the terrain provider
     viewer.terrainProvider = newTerrainProvider;
-
-    // Restore the imagery layers
-    imageryLayers.removeAll(false);
-    imageryLayersState.forEach(state => {
-        const newLayer = imageryLayers.addImageryProvider(state.imageryProvider);
-        newLayer.show = state.show;
-        newLayer.alpha = state.alpha;
-    });
 
     console.log("Terrain provider updated without reloading layers.");
 }
@@ -68,7 +48,7 @@ export async function addShadowAnalysis(viewer) {
     let heightRestrictionListener = null;
 
 
-    const minimumHeightAboveTerrain = 8000; // Mindesthöhe über dem Gelände in Metern
+    const minimumHeightAboveTerrain = 5000; // Mindesthöhe über dem Gelände in Metern
     const maximumHeightAboveTerrain = 20000; // Maximale Höhe über dem Gelände in Metern
     
     function enforceCameraHeightRestriction(viewer) {
