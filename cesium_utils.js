@@ -11,57 +11,6 @@ export function performInitialZoom(viewer) {
     });
 }
 
-// export function sortLayersByOrder(layersConfig,viewer) {
-//     const imageryLayers = viewer.imageryLayers;
-
-//     // Find the default layer
-//     const defaultLayer = layersConfig.find(layer => layer.order === 9999);
-//     const activeLayers = layersConfig
-//         .filter(layer => layer.viewerLayer && layer.order !== 9999)
-//         .sort((a, b) => a.order - b.order);
-
-//     // Clear all layers and re-add them in sorted order
-//     imageryLayers.removeAll(false);
-//     [...activeLayers, defaultLayer].reverse().forEach(layer => {
-//         if (layer && layer.viewerLayer) {
-//             imageryLayers.add(layer.viewerLayer);
-//         }
-//     });
-
-//     //console.log("Layers sorted correctly:", [defaultLayer.name, ...activeLayers.map(layer => layer.name)]);
-// }
-
-
-/*
-export function updateLayerVisibility(layersConfig, viewer) {
-    const imageryLayers = viewer.imageryLayers;
-
-    // Sortiere Layer basierend auf ihrer `order` (aufsteigend)
-    const sortedLayers = layersConfig.sort((a, b) => a.order - b.order);
-
-    // Sichtbarkeit und Reihenfolge anpassen
-    sortedLayers.forEach(layer => {
-        if (layer.active) {
-            if (!layer.viewerLayer) {
-                // Layer hinzufügen, wenn er nicht existiert
-                layer.viewerLayer = imageryLayers.addImageryProvider(layer.provider);
-                layer.viewerLayer.alpha = layer.opacity || 1;
-            }
-            // Sichtbarkeit setzen
-            layer.viewerLayer.show = true;
-        } else {
-            // Layer nur unsichtbar machen
-            if (layer.viewerLayer) {
-                layer.viewerLayer.show = false;
-            }
-        }
-    });
-
-}
-
-*/
-
-
 export function initializeLayers(layersConfig, viewer) {
     const imageryLayers = viewer.imageryLayers;
 
