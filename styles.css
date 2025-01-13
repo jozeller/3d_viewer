@@ -26,6 +26,14 @@ body {
     margin-bottom: 10px;
 }
 
+/* Mobile Anpassung */
+@media (max-width: 768px) {
+    #menu h2 {
+        text-align: center; /* Titel im Mobile-Modus zentrieren */
+        margin-top: 10px; /* Optionaler Abstand nach oben */
+    }
+}
+
 #menu ul {
     list-style-type: none;
     padding: 0;
@@ -83,6 +91,7 @@ body {
 
 /* Layer-Eintrag */
 .legend-item {
+    margin: 10px auto;
     border: 1px solid #ccc;
     margin-bottom: 5px;
     border-radius: 4px;
@@ -123,6 +132,16 @@ body {
     display: block;
 }
 
+/* Mobile Anpassungen */
+@media (max-width: 768px) {
+    .legend-category {
+        padding: 10px 15px; /* Zusätzlicher Abstand links und rechts */
+    }
+
+    .legend-item {
+        max-width: 95%; /* Breite anpassen */
+    }
+}
 
 
 /* Slider Stil */
@@ -150,7 +169,7 @@ input[type="range"] {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    z-index: 1000;
+    z-index: 999;
 }
 
 
