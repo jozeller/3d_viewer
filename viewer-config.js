@@ -1,5 +1,5 @@
 import { layersConfig } from './layersConfig.js';
-import { performInitialZoom, initializeLayers, sortLayersByOrder,updateLayerVisibility} from './cesium_utils.js';
+import { performInitialZoom, initializeLayers} from './cesium_utils.js';
 import { addLayersToLegend } from './addlayertolegend.js';
 import { addShadowAnalysis } from './shadow_analysis.js';
 import { setupLayerVisibilityControl } from './cesium_utils.js';

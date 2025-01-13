@@ -1,8 +1,8 @@
-import { updateLayerVisibility } from './cesium_utils.js';
-import { initializeLayers } from './cesium_utils.js';
+//import { updateLayerVisibility } from './cesium_utils.js';
+// import { initializeLayers } from './cesium_utils.js';
 
-import { setupLayerVisibilityControl } from './cesium_utils.js';
-import { layersConfig } from './layersConfig.js';
+// import { setupLayerVisibilityControl } from './cesium_utils.js';
+// import { layersConfig } from './layersConfig.js';
 
 const sanitizeLayerName = (name) => name.replace(/[^a-zA-Z0-9-_]/g, '-');
 
@@ -48,8 +48,6 @@ export function addLayersToLegend(layersConfig, viewer) {
                 toggleCheckbox.addEventListener('change', () => {
                     layer.active = toggleCheckbox.checked;
 
-                    // Sichtbarkeit ohne Neuladen ändern
-                    updateLayerVisibility(layersConfig, viewer);
                 });
 
                 const menu = document.createElement('div');

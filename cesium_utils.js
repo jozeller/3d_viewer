@@ -11,28 +11,28 @@ export function performInitialZoom(viewer) {
     });
 }
 
-export function sortLayersByOrder(layersConfig,viewer) {
-    const imageryLayers = viewer.imageryLayers;
+// export function sortLayersByOrder(layersConfig,viewer) {
+//     const imageryLayers = viewer.imageryLayers;
 
-    // Find the default layer
-    const defaultLayer = layersConfig.find(layer => layer.order === 9999);
-    const activeLayers = layersConfig
-        .filter(layer => layer.viewerLayer && layer.order !== 9999)
-        .sort((a, b) => a.order - b.order);
+//     // Find the default layer
+//     const defaultLayer = layersConfig.find(layer => layer.order === 9999);
+//     const activeLayers = layersConfig
+//         .filter(layer => layer.viewerLayer && layer.order !== 9999)
+//         .sort((a, b) => a.order - b.order);
 
-    // Clear all layers and re-add them in sorted order
-    imageryLayers.removeAll(false);
-    [...activeLayers, defaultLayer].reverse().forEach(layer => {
-        if (layer && layer.viewerLayer) {
-            imageryLayers.add(layer.viewerLayer);
-        }
-    });
+//     // Clear all layers and re-add them in sorted order
+//     imageryLayers.removeAll(false);
+//     [...activeLayers, defaultLayer].reverse().forEach(layer => {
+//         if (layer && layer.viewerLayer) {
+//             imageryLayers.add(layer.viewerLayer);
+//         }
+//     });
 
-    //console.log("Layers sorted correctly:", [defaultLayer.name, ...activeLayers.map(layer => layer.name)]);
-}
+//     //console.log("Layers sorted correctly:", [defaultLayer.name, ...activeLayers.map(layer => layer.name)]);
+// }
 
 
-
+/*
 export function updateLayerVisibility(layersConfig, viewer) {
     const imageryLayers = viewer.imageryLayers;
 
@@ -57,11 +57,9 @@ export function updateLayerVisibility(layersConfig, viewer) {
         }
     });
 
-    // Sortiere die Layer nach ihrer `order`
-    sortLayersByOrder(layersConfig, viewer);
 }
 
-
+*/
 
 
 export function initializeLayers(layersConfig, viewer) {
@@ -82,8 +80,6 @@ export function initializeLayers(layersConfig, viewer) {
         }
     }
 
-
-
     // Basislayer nach unten verschieben
     const baseLayer = layersConfig.find(layer => layer.order === 9999);
     if (baseLayer && baseLayer.viewerLayer) {
@@ -92,6 +88,8 @@ export function initializeLayers(layersConfig, viewer) {
 }
 
 const sanitizeLayerName = (name) => name.replace(/[^a-zA-Z0-9-_]/g, '-');
+
+
 export function setupLayerVisibilityControl(layersConfig, viewer) {
     const imageryLayers = viewer.imageryLayers;
 
@@ -99,28 +97,22 @@ export function setupLayerVisibilityControl(layersConfig, viewer) {
         const checkbox = document.querySelector(`#checkbox-${sanitizeLayerName(layer.name)}`);
         if (checkbox) {
             checkbox.addEventListener('change', () => {
-                layer.active = checkbox.checked;
-
-                if (layer.active) {
-                    // Layer hinzufügen, wenn er aktiviert wird
+                if (checkbox.checked) {
+                    // Falls der Layer noch nicht existiert, nur beim ersten Aktivieren hinzufügen
                     if (!layer.viewerLayer) {
                         layer.viewerLayer = imageryLayers.addImageryProvider(layer.provider);
                         layer.viewerLayer.alpha = layer.opacity || 1;
-                    } else {
-                        // Falls der Layer schon existiert, nur sichtbar machen
-                        layer.viewerLayer.show = true;
                     }
+                    // Layer sichtbar machen
+                    layer.viewerLayer.show = true;
                 } else {
-                    // Layer entfernen, wenn er deaktiviert wird
+                    // Layer nur ausblenden
                     if (layer.viewerLayer) {
-                        imageryLayers.remove(layer.viewerLayer, false);
-                        layer.viewerLayer = null; // Reset, um zukünftige Aktivierungen zu erlauben
+                        layer.viewerLayer.show = false;
                     }
                 }
-
-                // Sortiere Layer nach jeder Änderung neu
-                sortLayersByOrder(layersConfig, viewer);
             });
         }
     });
 }
+
