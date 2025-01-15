@@ -83,7 +83,7 @@ export function enableFPV(viewer) {
             duration: 1.5,
             complete: () => {
                 console.log('Camera moved to FPV position');
-                terrainCheckInterval = setInterval(ensureAboveTerrain, 200); // Start terrain check
+                terrainCheckInterval = setInterval(ensureAboveTerrain, 1000); // Start terrain check
             },
         });
     
@@ -107,7 +107,7 @@ export function enableFPV(viewer) {
     }
     
     function enableFreeLook(scene, viewer) {
-        const sensitivity = 0.005; // Passe die Empfindlichkeit an
+        const sensitivity = 0.008; // Passe die Empfindlichkeit an
         const handler = new Cesium.ScreenSpaceEventHandler(scene.canvas);
     
         // Kamera auf den Horizont ausrichten, wenn FreeLook aktiviert wird
