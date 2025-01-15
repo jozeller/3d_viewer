@@ -3,7 +3,7 @@ import { performInitialZoom, initializeLayers} from './cesium_utils.js';
 import { addLayersToLegend } from './addlayertolegend.js';
 import { addShadowAnalysis } from './shadow_analysis.js';
 import { setupLayerVisibilityControl } from './cesium_utils.js';
-
+import { enableFPV } from './fpv_mode.js';
 
 
 Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmODI4YTJjMy0zYWZhLTRlNzItOWQ3My05NTNkZDQ1ODYyYWYiLCJpZCI6NzY1NzgsImlhdCI6MTYzOTU1MzA1Nn0.AQlWSR6-eL0Wdq2c0UyV3_gyn6cd1xmm3KolhvK54cw';
@@ -23,7 +23,7 @@ const viewer = new Cesium.Viewer('cesiumContainer', {
 });
 
 viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(8.1355, 46.4754, 400000), // Zentrum der Schweiz
+    destination: Cesium.Cartesian3.fromDegrees(8.1355, 46.4754, 300000), // Zentrum der Schweiz
     orientation: {
         heading: Cesium.Math.toRadians(0),   // Richtung Norden
         pitch: Cesium.Math.toRadians(-90),  // Blickwinkel nach unten
@@ -32,8 +32,9 @@ viewer.camera.setView({
 });
 let initialZoomPerformed = false;
 
-viewer.scene.globe.preloadSiblings = true;
+//viewer.scene.globe.preloadSiblings = true;
 // Wait until all tiles are loaded before performing the initial zoom
+/*
 viewer.scene.globe.tileLoadProgressEvent.addEventListener((current, total) => {
     if (!initialZoomPerformed && current === 0) {
         initialZoomPerformed = true;
@@ -41,7 +42,7 @@ viewer.scene.globe.tileLoadProgressEvent.addEventListener((current, total) => {
         performInitialZoom(viewer); // Center camera on Switzerland
     }
 });
-
+*/
 // Replaces home button default behavior with custom zoom
 viewer.homeButton.viewModel.command.beforeExecute.addEventListener((event) => { 
     event.cancel = true;
@@ -74,6 +75,8 @@ addLayersToLegend(layersConfig, viewer);
 setupLayerVisibilityControl(layersConfig, viewer);
 // Add Shadow Analysis to the UI
 addShadowAnalysis(viewer);
+// Add FPV mode to the UI
+enableFPV(viewer);
 
 
 const copyrightButton = document.getElementById('copyrightButton');

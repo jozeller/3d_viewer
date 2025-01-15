@@ -180,6 +180,10 @@ input[type="range"] {
     z-index: 999;
 }
 
+#fpvButton {
+    z-index: 999;
+}
+
 
 @media (max-width: 768px) {
     #copyrightButton {
@@ -188,6 +192,11 @@ input[type="range"] {
     }
     #shadowButton {
         bottom: calc(env(safe-area-inset-bottom) + 110px);
+        left: 10px;
+    }
+
+    #fpvButton {
+        bottom: calc(env(safe-area-inset-bottom) + 160px);
         left: 10px;
     }
 }
@@ -202,6 +211,11 @@ input[type="range"] {
     #shadowButton {
         bottom: 10px;
         left: calc(250px + 80px); /* 250px Breite der Legende + zusätzlicher Abstand */
+    }
+
+    #fpvButton {
+        bottom: 10px;
+        left: calc(250px + 130px); /* 250px Breite der Legende + zusätzlicher Abstand */
     }
 }
 
@@ -287,3 +301,6 @@ input[type="range"] {
     box-shadow: 0 0 5px rgba(0, 120, 212, 0.5);
     outline: none;
 }
+
+
+
